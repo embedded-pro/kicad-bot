@@ -183,10 +183,16 @@ def discover_project(
 
 
 def ensure_output_dir(output_dir: str | os.PathLike[str]) -> Path:
-    """Create (idempotently) and return the output directory as a Path."""
+    """Create (idempotently) and return the output directory as an absolute Path.
+
+    The path is resolved to an absolute one because wrapped tools (kicad-cli)
+    run with ``cwd`` set to the *project* directory; a relative output path would
+    otherwise be written under the project dir while we read it relative to the
+    process working directory.
+    """
     path = Path(output_dir)
     path.mkdir(parents=True, exist_ok=True)
-    return path
+    return path.resolve()
 
 
 @dataclass

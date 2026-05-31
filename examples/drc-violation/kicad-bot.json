@@ -1,0 +1,9 @@
+{
+  "$schema": "../../docs/kicad-bot.schema.json",
+  "kicad_version": 9,
+  "verify": {
+    "schematic_parity": false,
+    "drc_severity": "error",
+    "exclusions": []
+  }
+}

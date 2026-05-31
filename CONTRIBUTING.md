@@ -21,11 +21,25 @@ Running the KiCad-backed capabilities locally also requires a KiCad 8+ install
 Every change must pass the same gates CI runs:
 
 ```bash
-ruff check .          # lint
-ruff format --check . # formatting
-mypy                  # type-check
-pytest                # unit + integration tests
+ruff check .            # lint
+ruff format --check .   # formatting
+mypy                    # type-check
+pytest tests/unit       # hermetic unit tests (no KiCad needed)
+pytest tests/integration # end-to-end tests (require kicad-cli; auto-skip if absent)
 ```
+
+### Test layout
+
+| Layer | Location | What it covers | Needs |
+| ----- | -------- | -------------- | ----- |
+| Unit | `tests/unit/` | Parsers, gates, metrics, report/PR-comment rendering — pure Python | nothing |
+| Integration | `tests/integration/` | Full `kicad-bot-verify` pipeline against the `examples/` projects | real `kicad-cli` |
+| Self-test | `.github/workflows/self-test.yml` | The composite action end-to-end on `examples/minimal` | the action |
+
+Integration tests are skipped automatically when `kicad-cli` is not on PATH, so
+the unit suite stays hermetic on machines without KiCad. In CI the `integration`
+job installs KiCad and runs them for real — it is a good required status check
+alongside `lint` and `unit`.
 
 ## Commit messages
 

@@ -32,7 +32,12 @@
       "Bash(./.venv/Scripts/python.exe -m ruff check .)",
       "Bash(./.venv/Scripts/python.exe -m ruff format --check .)",
       "Bash(./.venv/Scripts/python.exe -m mypy)",
-      "Bash(./.venv/Scripts/python.exe -m pytest -q)"
+      "Bash(./.venv/Scripts/python.exe -m pytest -q)",
+      "Bash(rm -f tests/test_verify_parse.py tests/test_cli.py tests/test_metrics.py tests/test_report.py tests/test_pr_comment.py)",
+      "Bash(rm -rf tests/__pycache__)",
+      "Read(//c/c/Users/Gabriel/Desktop/kicad-bot-action/**)",
+      "Bash(./.venv/Scripts/python.exe -m pytest -v)",
+      "Bash(./.venv/Scripts/python.exe -m pytest tests/unit -q)"
     ],
     "additionalDirectories": [
       "C:\\Users\\Gabriel\\Desktop\\_ref"

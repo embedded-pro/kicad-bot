@@ -92,6 +92,26 @@ build artifact:
 | `diff.pdf` | Schematic/PCB visual diff — with `run-diff` |
 | `fab/` | Gerbers, drill, position, BOM, 3D, schematic PDF — with `run-fab` |
 
+## Development & required checks
+
+This repo's own CI (`.github/workflows/ci.yml`) runs three jobs you can mark as
+**required status checks** on `main`:
+
+| Job | What it guards |
+| --- | -------------- |
+| `lint` | `ruff` lint + format and `mypy --strict` |
+| `unit` | hermetic unit tests on Python 3.11–3.13 |
+| `integration` | full `kicad-bot-verify` pipeline against the `examples/` projects using a real `kicad-cli` |
+
+The integration job installs KiCad and runs `tests/integration/`, which verifies
+the clean [`examples/minimal`](examples/minimal/) project passes and the
+deliberately-broken [`examples/drc-violation`](examples/drc-violation/) project
+trips the DRC gate. Locally these tests skip automatically when `kicad-cli` is
+not installed, so `pytest tests/unit` stays fast and dependency-free.
+
+All workflow actions are pinned to commit SHAs and kept current by Dependabot
+(`.github/dependabot.yml`).
+
 ## Documentation
 
 - [Usage](docs/usage.md) — every CLI flag and action input/output
