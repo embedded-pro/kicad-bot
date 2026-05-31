@@ -1,0 +1,30 @@
+{
+  "$schema": "https://schemas.kicad.org/erc.v1.json",
+  "source": "minimal.kicad_sch",
+  "date": "2026-05-31T00:00:00+0000",
+  "kicad_version": "9.0.0",
+  "sheets": [
+    {
+      "uuid_path": "/",
+      "path": "/",
+      "violations": [
+        {
+          "severity": "error",
+          "type": "pin_not_connected",
+          "description": "Pin not connected"
+        },
+        {
+          "severity": "warning",
+          "type": "power_pin_not_driven",
+          "description": "Input Power pin not driven by any Output Power pins"
+        },
+        {
+          "severity": "warning",
+          "type": "silk_overlap",
+          "description": "Excluded by config",
+          "excluded": true
+        }
+      ]
+    }
+  ]
+}

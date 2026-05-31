@@ -1,0 +1,67 @@
+[build-system]
+requires = ["hatchling>=1.21"]
+build-backend = "hatchling.build"
+
+[project]
+name = "kicad-bot"
+version = "0.1.0"
+description = "CI quality gate for KiCad projects: ERC/DRC verification, BOM availability checks, visual diffs, and fabrication-output generation."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "Apache-2.0" }
+authors = [{ name = "embedded-pro" }]
+keywords = ["kicad", "eda", "pcb", "erc", "drc", "ci", "github-action", "kibot", "kicost"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Electronic Design Automation (EDA)",
+]
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/embedded-pro/kicad-bot"
+Repository = "https://github.com/embedded-pro/kicad-bot"
+Issues = "https://github.com/embedded-pro/kicad-bot/issues"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=5.0",
+    "ruff>=0.6",
+    "mypy>=1.11",
+]
+
+[project.scripts]
+kicad-bot-verify = "kicad_bot.verify:main"
+kicad-bot-bom = "kicad_bot.bom:main"
+kicad-bot-diff = "kicad_bot.diff:main"
+kicad-bot-fab = "kicad_bot.fab:main"
+kicad-bot-quickstart = "kicad_bot.quickstart:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/kicad_bot"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "W", "C4", "SIM", "RUF"]
+ignore = ["E501"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_unused_ignores = true
+disallow_untyped_defs = true
+files = ["src/kicad_bot"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

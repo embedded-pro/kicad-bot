@@ -1,0 +1,204 @@
+name: "kicad-bot"
+description: >-
+  CI quality gate for KiCad projects: ERC/DRC verification, BOM availability
+  checks, visual diffs, and fabrication-output generation.
+author: "embedded-pro"
+branding:
+  icon: "check-circle"
+  color: "green"
+
+inputs:
+  # --- capability toggles ---
+  run-verify:
+    description: "Run headless ERC/DRC verification (kicad-cli)."
+    default: "true"
+  run-bom-check:
+    description: "Run BOM availability/lifecycle check (KiBot + KiCost)."
+    default: "false"
+  run-diff:
+    description: "Render a visual schematic/PCB diff against a baseline ref."
+    default: "false"
+  run-fab:
+    description: "Generate the fabrication/documentation output package (KiBot)."
+    default: "false"
+  quickstart:
+    description: "Auto-detect the project and run all enabled stages with zero config."
+    default: "false"
+
+  # --- project inputs ---
+  project-dir:
+    description: "Directory containing the KiCad project."
+    default: "."
+  schematic:
+    description: "Path to the .kicad_sch file (auto-detected if omitted)."
+    required: false
+  board:
+    description: "Path to the .kicad_pcb file (auto-detected if omitted)."
+    required: false
+  kicad-version:
+    description: "Major KiCad version to install/use (8 | 9 | 10)."
+    default: "9"
+  config-path:
+    description: "Path to kicad-bot.json (relative to project-dir if not absolute)."
+    default: "kicad-bot.json"
+
+  # --- verify gates ---
+  fail-on-erc:
+    description: "Fail the build on ERC violations."
+    default: "true"
+  fail-on-drc:
+    description: "Fail the build on DRC violations."
+    default: "true"
+  drc-severity:
+    description: "Minimum severity that gates the build (error | warning | all)."
+    default: "error"
+
+  # --- bom gates ---
+  fail-on-eol:
+    description: "Fail when any part is end-of-life / NRND / obsolete."
+    default: "false"
+  fail-on-unavailable:
+    description: "Fail when any part is out of stock at the configured distributors."
+    default: "false"
+  distributors:
+    description: "Comma-separated distributor list (e.g. 'Mouser,Digi-Key')."
+    default: "Mouser,Digi-Key"
+  kicost-config:
+    description: "Path to an existing KiCost config (otherwise one is generated from env)."
+    required: false
+
+  # --- diff ---
+  diff-baseline-ref:
+    description: "Git ref to diff against. Defaults to the PR base when empty."
+    default: ""
+
+  # --- output behaviour ---
+  output-dir:
+    description: "Directory for reports and artifacts."
+    default: "kicad-bot-output"
+  pr-comment:
+    description: "Render and upsert an idempotent PR comment."
+    default: "true"
+  upload-artifact:
+    description: "Upload the output directory as a workflow artifact."
+    default: "true"
+  artifact-name:
+    description: "Name of the uploaded artifact."
+    default: "kicad-bot-output"
+
+outputs:
+  erc-violations:
+    description: "ERC violation count."
+    value: ${{ steps.run.outputs.erc-violations }}
+  drc-violations:
+    description: "DRC violation count."
+    value: ${{ steps.run.outputs.drc-violations }}
+  eol-parts:
+    description: "Count of EOL/NRND parts."
+    value: ${{ steps.run.outputs.eol-parts }}
+  unavailable-parts:
+    description: "Count of out-of-stock parts."
+    value: ${{ steps.run.outputs.unavailable-parts }}
+  report-path:
+    description: "Path to the markdown report."
+    value: ${{ steps.run.outputs.report-path }}
+  metrics-path:
+    description: "Path to kicad_bot_metrics.json."
+    value: ${{ steps.run.outputs.metrics-path }}
+  passed:
+    description: "'true' when every enabled gate passed."
+    value: ${{ steps.run.outputs.passed }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+
+    - name: Install kicad-bot
+      shell: bash
+      run: pip install "${{ github.action_path }}"
+
+    # kicad-cli (always needed for verify; cheap relative to the full stack).
+    - name: Install kicad-cli
+      if: ${{ inputs.run-verify == 'true' || inputs.quickstart == 'true' }}
+      shell: bash
+      run: |
+        set -euo pipefail
+        sudo add-apt-repository --yes "ppa:kicad/kicad-${{ inputs.kicad-version }}.0-releases"
+        sudo apt-get update
+        sudo apt-get install --yes --no-install-recommends kicad-cli || sudo apt-get install --yes kicad
+        kicad-cli version
+
+    # The KiBot stack (BOM/diff/fab) needs the full KiCad + a headless display.
+    - name: Install KiBot stack
+      if: ${{ inputs.run-bom-check == 'true' || inputs.run-diff == 'true' || inputs.run-fab == 'true' }}
+      shell: bash
+      run: |
+        set -euo pipefail
+        sudo add-apt-repository --yes "ppa:kicad/kicad-${{ inputs.kicad-version }}.0-releases"
+        sudo apt-get update
+        sudo apt-get install --yes kicad xvfb
+        pip install kibot kicost kidiff
+
+    # Full git history is required to resolve the diff baseline ref.
+    - name: Fetch baseline history
+      if: ${{ inputs.run-diff == 'true' }}
+      shell: bash
+      run: git fetch --no-tags --prune --depth=50 origin "+refs/heads/*:refs/remotes/origin/*" || true
+
+    - name: Run kicad-bot
+      id: run
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      run: |
+        set -uo pipefail
+        common=(
+          --project-dir "${{ inputs.project-dir }}"
+          --config-path "${{ inputs.config-path }}"
+          --output-dir "${{ inputs.output-dir }}"
+          --kicad-version "${{ inputs.kicad-version }}"
+        )
+        [ -n "${{ inputs.schematic }}" ] && common+=(--schematic "${{ inputs.schematic }}")
+        [ -n "${{ inputs.board }}" ] && common+=(--board "${{ inputs.board }}")
+        [ "${{ inputs.pr-comment }}" = "true" ] || common+=(--no-pr-comment)
+
+        status=0
+
+        if [ "${{ inputs.run-verify }}" = "true" ] || [ "${{ inputs.quickstart }}" = "true" ]; then
+          verify=("${common[@]}" --drc-severity "${{ inputs.drc-severity }}")
+          [ "${{ inputs.fail-on-erc }}" = "true" ] || verify+=(--no-fail-on-erc)
+          [ "${{ inputs.fail-on-drc }}" = "true" ] || verify+=(--no-fail-on-drc)
+          kicad-bot-verify "${verify[@]}" || status=$?
+        fi
+
+        if [ "${{ inputs.run-bom-check }}" = "true" ]; then
+          bom=("${common[@]}" --distributors "${{ inputs.distributors }}")
+          [ "${{ inputs.fail-on-eol }}" = "true" ] && bom+=(--fail-on-eol)
+          [ "${{ inputs.fail-on-unavailable }}" = "true" ] && bom+=(--fail-on-unavailable)
+          [ -n "${{ inputs.kicost-config }}" ] && bom+=(--kicost-config "${{ inputs.kicost-config }}")
+          kicad-bot-bom "${bom[@]}" || status=$?
+        fi
+
+        if [ "${{ inputs.run-diff }}" = "true" ]; then
+          diff=("${common[@]}")
+          [ -n "${{ inputs.diff-baseline-ref }}" ] && diff+=(--baseline-ref "${{ inputs.diff-baseline-ref }}")
+          xvfb-run -a kicad-bot-diff "${diff[@]}" || status=$?
+        fi
+
+        if [ "${{ inputs.run-fab }}" = "true" ]; then
+          xvfb-run -a kicad-bot-fab "${common[@]}" || status=$?
+        fi
+
+        exit $status
+
+    - name: Upload artifact
+      if: ${{ always() && inputs.upload-artifact == 'true' }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ inputs.artifact-name }}
+        path: ${{ inputs.output-dir }}
+        if-no-files-found: ignore

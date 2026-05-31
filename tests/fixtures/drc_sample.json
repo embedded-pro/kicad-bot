@@ -1,0 +1,27 @@
+{
+  "$schema": "https://schemas.kicad.org/drc.v1.json",
+  "source": "minimal.kicad_pcb",
+  "date": "2026-05-31T00:00:00+0000",
+  "kicad_version": "9.0.0",
+  "coordinate_units": "mm",
+  "violations": [
+    {
+      "severity": "error",
+      "type": "clearance",
+      "description": "Clearance violation (netclass 'Default')"
+    },
+    {
+      "severity": "warning",
+      "type": "silk_over_copper",
+      "description": "Silkscreen overlaps with copper",
+      "excluded": true
+    }
+  ],
+  "unconnected_items": [
+    {
+      "type": "unconnected",
+      "description": "Missing connection between items on net 'GND'"
+    }
+  ],
+  "schematic_parity": []
+}

@@ -1,0 +1,41 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git -C \"c:\\\\Users\\\\Gabriel\\\\Desktop\\\\kicad-bot-action\" status)",
+      "Read(//c/Users/Gabriel/Desktop/**)",
+      "Read(//c/Users/Gabriel/.claude/projects/c--Users-Gabriel-Desktop-kicad-bot-action/memory//**)",
+      "Bash(git init *)",
+      "Bash(git branch *)",
+      "Bash(py --version)",
+      "Bash(gh auth *)",
+      "Bash(gh repo *)",
+      "Bash(echo \"exit: $?\")",
+      "Bash(gh --version)",
+      "Bash(echo \"exit=$?\")",
+      "PowerShell(gh auth status 2>&1; \"exit=$LASTEXITCODE\")",
+      "PowerShell($o = gh auth status 2>&1 | Out-String; Write-Output $o; Write-Output \"EXIT=$LASTEXITCODE\")",
+      "Bash(rm -rf /c/Users/Gabriel/Desktop/_ref; echo cleaned)",
+      "Bash(curl -fsSL https://www.apache.org/licenses/LICENSE-2.0.txt -o LICENSE)",
+      "PowerShell(if \\(Test-Path LICENSE\\) { \\(Get-Item LICENSE\\).Length; Get-Content LICENSE -TotalCount 2 } else { \"no license file\" })",
+      "PowerShell(Write-Output \\(\"files: \" + \\(\\(Get-ChildItem -Force -Name\\) -join \", \"\\)\\))",
+      "PowerShell(\"hello-test-123\")",
+      "PowerShell([Console]::Out.WriteLine\\(\"DIRECT_CONSOLE_PROBE_99\"\\); Get-Location | Select-Object -ExpandProperty Path)",
+      "Bash(python -m venv .venv)",
+      "Bash(./.venv/Scripts/python.exe -m pip install -q --upgrade pip)",
+      "Bash(./.venv/Scripts/python.exe -m pip install -q -e \".[dev]\")",
+      "Bash(./.venv/Scripts/python.exe -m pytest)",
+      "Bash(python -c \"print\\('SIMPLE_STDOUT_TEST_OK'\\)\")",
+      "Read(//c/c/Users/Gabriel/Desktop/_ref/cortex-memory-budget/**)",
+      "Read(//c/c/Users/Gabriel/Desktop/_ref/cortex-memory-budget/src/cortex_memory_budget/**)",
+      "Bash(./.venv/Scripts/python.exe -m kicad_bot.verify --help)",
+      "Bash(echo \"HELP_RC=$?\")",
+      "Bash(./.venv/Scripts/python.exe -m ruff check .)",
+      "Bash(./.venv/Scripts/python.exe -m ruff format --check .)",
+      "Bash(./.venv/Scripts/python.exe -m mypy)",
+      "Bash(./.venv/Scripts/python.exe -m pytest -q)"
+    ],
+    "additionalDirectories": [
+      "C:\\Users\\Gabriel\\Desktop\\_ref"
+    ]
+  }
+}

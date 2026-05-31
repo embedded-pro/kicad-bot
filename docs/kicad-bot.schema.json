@@ -1,0 +1,106 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/embedded-pro/kicad-bot/main/docs/kicad-bot.schema.json",
+  "title": "kicad-bot configuration",
+  "description": "Schema for kicad-bot.json, the single config file consumed by every kicad-bot capability.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "kicad_version": {
+      "description": "Major KiCad version the project targets.",
+      "type": "integer",
+      "enum": [8, 9, 10]
+    },
+    "verify": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "schematic_parity": {
+          "description": "Run schematic-parity checks during DRC.",
+          "type": "boolean",
+          "default": true
+        },
+        "drc_severity": {
+          "description": "Minimum severity that gates the build.",
+          "type": "string",
+          "enum": ["error", "warning", "all"],
+          "default": "error"
+        },
+        "exclusions": {
+          "description": "Violation type identifiers to exclude from gating.",
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "bom": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "distributors": {
+          "description": "Distributors to query for pricing/availability.",
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "board_quantity": {
+          "description": "Quantity used for pricing breaks.",
+          "type": "integer",
+          "minimum": 1,
+          "default": 1
+        },
+        "fail_on_lifecycle": {
+          "description": "Lifecycle states that should fail the build.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["active", "nrnd", "obsolete", "eol", "unknown"]
+          }
+        },
+        "fail_on_unavailable": {
+          "description": "Fail when any part is out of stock.",
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "diff": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "baseline_ref": {
+          "description": "Git ref to diff against (defaults to the PR base).",
+          "type": "string"
+        }
+      }
+    },
+    "fab": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "outputs": {
+          "description": "KiBot output set to generate.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "gerbers",
+              "drill",
+              "position",
+              "bom",
+              "schematic_pdf",
+              "step",
+              "render_3d"
+            ]
+          }
+        },
+        "format": {
+          "description": "Packaging format for the fabrication outputs.",
+          "type": "string",
+          "enum": ["zip", "directory"],
+          "default": "zip"
+        }
+      }
+    }
+  }
+}

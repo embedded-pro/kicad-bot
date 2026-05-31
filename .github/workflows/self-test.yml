@@ -1,0 +1,52 @@
+name: self-test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: self-test-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  minimal-verify:
+    name: Verify (examples/minimal)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run kicad-bot (verify only)
+        id: kb
+        uses: ./
+        with:
+          run-verify: "true"
+          project-dir: examples/minimal
+          fail-on-drc: "true"
+          fail-on-erc: "true"
+          artifact-name: self-test-minimal
+
+      - name: Assert outputs exist
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f kicad-bot-output/report.md
+          test -f kicad-bot-output/kicad_bot_metrics.json
+          test -f kicad-bot-output/erc.json
+          test -f kicad-bot-output/drc.json
+          echo "report-path: ${{ steps.kb.outputs.report-path }}"
+          echo "erc-violations: ${{ steps.kb.outputs.erc-violations }}"
+          echo "drc-violations: ${{ steps.kb.outputs.drc-violations }}"
+          echo "passed: ${{ steps.kb.outputs.passed }}"
+
+      - name: Assert clean project passed
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "${{ steps.kb.outputs.passed }}" = "true"
+          grep -q "kicad-bot:report" kicad-bot-output/pr_comment.md
