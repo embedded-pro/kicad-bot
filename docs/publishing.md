@@ -84,3 +84,25 @@ Versions are managed automatically by **release-please**:
   `release.yml` to publish to PyPI and upload release assets.
 
 See [CONTRIBUTING.md](../CONTRIBUTING.md) for commit-message conventions.
+
+## Running CI on the release-please PR
+
+GitHub does **not** start new workflow runs for events created with the default
+`GITHUB_TOKEN`. Because release-please opens its PR with that token, the `CI`
+workflow does not run on the release-please branch by default.
+
+To make CI (and any other `pull_request` workflows) run on the release PR, give
+release-please a token that is allowed to trigger workflows:
+
+1. Create a **fine-grained PAT** (or a GitHub App installation token) with
+   `contents: read/write` and `pull-requests: read/write` permissions on this
+   repository.
+2. Add it as a repository secret named **`RELEASE_PLEASE_TOKEN`**.
+
+`release-please.yml` already reads this secret and falls back to `GITHUB_TOKEN`
+when it is absent:
+
+```yaml
+token: ${{ secrets.RELEASE_PLEASE_TOKEN || secrets.GITHUB_TOKEN }}
+```
+
