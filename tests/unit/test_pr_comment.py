@@ -32,4 +32,5 @@ def test_upsert_skips_without_token(monkeypatch) -> None:
 
 
 def test_upsert_skips_when_not_a_pr(monkeypatch) -> None:
+    monkeypatch.delenv("GITHUB_EVENT_PATH", raising=False)
     assert upsert_pr_comment("body", repo="o/r", pr_number=None, token="t") is False
