@@ -2,8 +2,8 @@
 
 This project uses **OIDC trusted publishing** to upload releases to PyPI
 without long-lived API tokens. The release workflow
-(`.github/workflows/release.yml`) triggers on version tags (`v*.*.*`) created
-by release-please.
+(`.github/workflows/release.yml`) is invoked by
+`.github/workflows/release-please.yml` when release-please creates a release.
 
 ## One-time PyPI setup
 
@@ -34,13 +34,13 @@ by release-please.
 ## How it works
 
 ```
-push tag v*.*.* ──► release.yml
-                       │
-                       ├─ build job:  python -m build → upload artifact
-                       │
-                       ├─ publish job: download artifact → pypa/gh-action-pypi-publish (OIDC)
-                       │
-                       └─ github-release job: create GitHub Release with dist files
+release-please.yml (release_created=true) ──► release.yml(tag_name)
+                                               │
+                                               ├─ build job:  python -m build → upload artifact
+                                               │
+                                               ├─ publish job: download artifact → pypa/gh-action-pypi-publish (OIDC)
+                                               │
+                                               └─ github-release job: upload dist files to the existing GitHub Release
 ```
 
 The `pypa/gh-action-pypi-publish` action exchanges a short-lived OIDC token
@@ -80,6 +80,7 @@ Versions are managed automatically by **release-please**:
 - Merging PRs with Conventional Commit messages (`feat:`, `fix:`, etc.) to
   `main` causes release-please to open/update a release PR.
 - Merging that release PR bumps the version in `pyproject.toml`, updates
-  `CHANGELOG.md`, creates a git tag, and triggers the release workflow.
+  `CHANGELOG.md`, creates the git tag and GitHub Release, then invokes
+  `release.yml` to publish to PyPI and upload release assets.
 
 See [CONTRIBUTING.md](../CONTRIBUTING.md) for commit-message conventions.
