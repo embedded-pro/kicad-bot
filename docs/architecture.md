@@ -85,7 +85,11 @@ artifact via `if: always()`.
 the action's own checkout (`github.action_path`), conditionally installs system
 dependencies **only for the capabilities that are enabled** (just `kicad-cli` for
 verify; the full KiCad + KiBot stack + `xvfb` for bom/diff/fab), runs each
-enabled CLI, and uploads the output directory as an artifact.
+enabled CLI, and uploads the output directory as an artifact. The KiBot-stack
+install is delegated to `scripts/install-kibot-stack.sh`, which installs a
+prebuilt wxPython wheel (binary-only, from the wxPython extras index) before
+`pip install kibot kicost kidiff` so wxPython is never compiled from source on a
+CI runner.
 
 ## Design principles
 
