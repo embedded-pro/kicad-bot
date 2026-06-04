@@ -129,7 +129,7 @@ runs:
         set -euo pipefail
         sudo add-apt-repository --yes "ppa:kicad/kicad-${{ inputs.kicad-version }}.0-releases"
         sudo apt-get update
-        sudo apt-get install --yes --no-install-recommends kicad-cli || sudo apt-get install --yes kicad
+        sudo apt-get install --yes --no-install-recommends kicad-cli || sudo apt-get install --yes --no-install-recommends kicad
         kicad-cli version
 
     # The KiBot stack (BOM/diff/fab) needs the full KiCad + a headless display.
