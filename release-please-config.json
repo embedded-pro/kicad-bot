@@ -17,5 +17,16 @@
       ]
     }
   },
+  "changelog-sections": [
+    { "type": "feat", "section": "Features" },
+    { "type": "fix", "section": "Bug Fixes" },
+    { "type": "chore", "section": "Miscellaneous Chores" },
+    { "type": "ci", "section": "Continuous Integration" },
+    { "type": "docs", "section": "Documentation" },
+    { "type": "refactor", "section": "Code Refactoring" },
+    { "type": "build", "section": "Build System" },
+    { "type": "test", "section": "Tests" },
+    { "type": "perf", "section": "Performance Improvements" }
+  ],
   "$comment": "release-please drives version bumps from Conventional Commits."
 }
