@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.3](https://github.com/embedded-pro/kicad-bot/compare/v0.1.2...v0.1.3) (2026-06-04)
+
+
+### Miscellaneous Chores
+
+* fix wxPython source-build failure in KiBot stack install ([#10](https://github.com/embedded-pro/kicad-bot/issues/10)) ([84599e1](https://github.com/embedded-pro/kicad-bot/commit/84599e18e3bff02670e23bea886716f90d101132))
+
 ## [0.1.2](https://github.com/embedded-pro/kicad-bot/compare/v0.1.1...v0.1.2) (2026-06-04)
 
 
