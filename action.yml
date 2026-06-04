@@ -133,15 +133,13 @@ runs:
         kicad-cli version
 
     # The KiBot stack (BOM/diff/fab) needs the full KiCad + a headless display.
+    # The install is delegated to a script so it can be tested in isolation; it
+    # installs a prebuilt wxPython wheel (binary-only) before pip-installing the
+    # stack, avoiding the slow, fragile source build that fails on CI runners.
     - name: Install KiBot stack
       if: ${{ inputs.run-bom-check == 'true' || inputs.run-diff == 'true' || inputs.run-fab == 'true' }}
       shell: bash
-      run: |
-        set -euo pipefail
-        sudo add-apt-repository --yes "ppa:kicad/kicad-${{ inputs.kicad-version }}.0-releases"
-        sudo apt-get update
-        sudo apt-get install --yes kicad xvfb
-        pip install kibot kicost kidiff
+      run: bash "${{ github.action_path }}/scripts/install-kibot-stack.sh" "${{ inputs.kicad-version }}"
 
     # Full git history is required to resolve the diff baseline ref.
     - name: Fetch baseline history
