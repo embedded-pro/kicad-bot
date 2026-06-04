@@ -19,9 +19,17 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+    outputs:
+      pr: ${{ steps.release.outputs.pr }}
     steps:
       - uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
         id: release
         with:
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
+
+  ci:
+    name: CI (release-please)
+    needs: release-please
+    if: needs.release-please.outputs.pr
+    uses: ./.github/workflows/ci.yml
