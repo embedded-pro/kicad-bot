@@ -31,7 +31,7 @@ def test_installs_prebuilt_wxpython_binary_only(script_text: str) -> None:
     # Restrict pip to binary wheels so it can never silently build from source...
     assert "--only-binary wxPython" in script_text
     # ...and point it at the official prebuilt-wheel extras index.
-    assert "extras.wxpython.org" in script_text
+    assert "https://extras.wxpython.org/wxPython4/extras/linux/gtk3/ubuntu-" in script_text
     assert "--find-links" in script_text
 
 

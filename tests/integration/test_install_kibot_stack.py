@@ -72,7 +72,8 @@ def test_wxpython_wheel_installed_before_kibot(run_script) -> None:
     pip_calls = [line for line in lines if line.startswith("pip ")]
 
     # wxPython is installed as a prebuilt binary wheel from the extras index...
-    assert any("--only-binary" in line and "extras.wxpython.org" in line and "wxPython" in line for line in pip_calls)
+    wx_index = "https://extras.wxpython.org/wxPython4/extras/linux/gtk3/ubuntu-"
+    assert any("--only-binary" in line and wx_index in line and "wxPython" in line for line in pip_calls)
 
     # ...strictly before kibot, so kibot's wxPython dependency is already met.
     wx_idx = next(i for i, line in enumerate(pip_calls) if "wxPython" in line)
