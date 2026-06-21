@@ -37,7 +37,12 @@
       "Bash(rm -rf tests/__pycache__)",
       "Read(//c/c/Users/Gabriel/Desktop/kicad-bot-action/**)",
       "Bash(./.venv/Scripts/python.exe -m pytest -v)",
-      "Bash(./.venv/Scripts/python.exe -m pytest tests/unit -q)"
+      "Bash(./.venv/Scripts/python.exe -m pytest tests/unit -q)",
+      "Bash(gh pr *)",
+      "WebFetch(domain:patch-diff.githubusercontent.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebSearch",
+      "Bash(python -c \"import yaml,sys; [yaml.safe_load\\(open\\(f\\)\\) for f in ['.github/workflows/release.yml','.github/workflows/release-please.yml']]; print\\('YAML OK'\\)\")"
     ],
     "additionalDirectories": [
       "C:\\Users\\Gabriel\\Desktop\\_ref"
