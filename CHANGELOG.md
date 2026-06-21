@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.4](https://github.com/embedded-pro/kicad-bot/compare/v0.1.3...v0.1.4) (2026-06-21)
+
+
+### Miscellaneous Chores
+
+* **deps:** bump actions/checkout from 6.0.2 to 6.0.3 ([#12](https://github.com/embedded-pro/kicad-bot/issues/12)) ([2c15b12](https://github.com/embedded-pro/kicad-bot/commit/2c15b12298fca889751e5ad6d936be591d315e91))
+* **deps:** bump github/codeql-action from 4.36.0 to 4.36.2 ([#13](https://github.com/embedded-pro/kicad-bot/issues/13)) ([3a8399f](https://github.com/embedded-pro/kicad-bot/commit/3a8399f452bef1707f97fa2fa1ba3e79da4e166c))
+
 ## [0.1.3](https://github.com/embedded-pro/kicad-bot/compare/v0.1.2...v0.1.3) (2026-06-04)
 
 
