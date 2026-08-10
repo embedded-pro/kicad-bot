@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.1.5](https://github.com/embedded-pro/kicad-bot/compare/v0.1.4...v0.1.5) (2026-08-10)
+
+
+### Miscellaneous Chores
+
+* **deps:** bump actions/checkout from 6.0.3 to 7.0.0 ([#16](https://github.com/embedded-pro/kicad-bot/issues/16)) ([a661ae7](https://github.com/embedded-pro/kicad-bot/commit/a661ae78889b2a93245914c28582952e8a8d1a60))
+* **deps:** bump actions/checkout from 7.0.0 to 7.0.1 ([#33](https://github.com/embedded-pro/kicad-bot/issues/33)) ([a58a339](https://github.com/embedded-pro/kicad-bot/commit/a58a3395c22bf28057e3474a2f43fa02aa69fcdb))
+* **deps:** bump actions/setup-python from 5 to 6 ([#3](https://github.com/embedded-pro/kicad-bot/issues/3)) ([9016227](https://github.com/embedded-pro/kicad-bot/commit/9016227034e5a8388838cd8bac202e17589ac193))
+* **deps:** bump actions/setup-python from 6 to 7 ([#29](https://github.com/embedded-pro/kicad-bot/issues/29)) ([9e704ba](https://github.com/embedded-pro/kicad-bot/commit/9e704ba38def75a48f1d7df34aafd27734745dfe))
+* **deps:** bump pypa/gh-action-pypi-publish from 1.14.0 to 1.14.1 ([#24](https://github.com/embedded-pro/kicad-bot/issues/24)) ([98f5c18](https://github.com/embedded-pro/kicad-bot/commit/98f5c18d802bd2469528517d0323e413d864bea7))
+* **deps:** bump pypa/gh-action-pypi-publish from 1.14.1 to 1.14.2 ([#34](https://github.com/embedded-pro/kicad-bot/issues/34)) ([0779bef](https://github.com/embedded-pro/kicad-bot/commit/0779befbb88098563f797547ff3126a751983735))
+* **deps:** bump softprops/action-gh-release from 3.0.0 to 3.0.1 ([#17](https://github.com/embedded-pro/kicad-bot/issues/17)) ([a9ccf1c](https://github.com/embedded-pro/kicad-bot/commit/a9ccf1c51210dbb96275d63b24d445be4b909000))
+* **deps:** bump softprops/action-gh-release from 3.0.1 to 3.0.2 ([#30](https://github.com/embedded-pro/kicad-bot/issues/30)) ([af2213f](https://github.com/embedded-pro/kicad-bot/commit/af2213fe39d7d639241fac4efb62cedf50a1213b))
+
 ## [0.1.4](https://github.com/embedded-pro/kicad-bot/compare/v0.1.3...v0.1.4) (2026-06-21)
 
 
