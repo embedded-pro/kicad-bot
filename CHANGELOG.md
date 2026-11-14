@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.6](https://github.com/embedded-pro/kicad-bot/compare/v0.1.5...v0.1.6) (2026-11-14)
+
+
+### Miscellaneous Chores
+
+* **deps:** bump softprops/action-gh-release from 3.0.3 to 3.0.4 ([#62](https://github.com/embedded-pro/kicad-bot/issues/62)) ([0acdd50](https://github.com/embedded-pro/kicad-bot/commit/0acdd508a691fa76b1c32930a4e96a75ff5a581d))
+* **deps:** bump the codeql-action group with 3 updates ([#61](https://github.com/embedded-pro/kicad-bot/issues/61)) ([a2e2092](https://github.com/embedded-pro/kicad-bot/commit/a2e2092a3d858fb753d9303f3dc8ed244dd72e7d))
+
 ## [0.1.5](https://github.com/embedded-pro/kicad-bot/compare/v0.1.4...v0.1.5) (2026-11-14)
 
 
