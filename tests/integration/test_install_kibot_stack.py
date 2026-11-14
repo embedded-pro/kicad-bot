@@ -24,13 +24,16 @@ import pytest
 ROOT = Path(__file__).resolve().parents[2]
 SCRIPT = ROOT / "scripts" / "install-kibot-stack.sh"
 
-# Each stub logs "<name> <args...>" to $KICAD_BOT_CALLS and exits 0.
+# Each stub logs "<name> <args...>" to $KICAD_BOT_CALLS and exits 0. KiCad goes
+# through install-kicad.sh, which also asks dpkg for the architecture and checks
+# the installed version, so dpkg and kicad-cli print what that script expects.
 _STUB = '#!/usr/bin/env bash\necho "$(basename "$0") $*" >> "$KICAD_BOT_CALLS"\nexit 0\n'
+_ECHO_STUBS = {"dpkg": "amd64", "kicad-cli": "$FAKE_KICAD_VERSION"}
 
 
-def _make_stub(bindir: Path, name: str) -> None:
+def _make_stub(bindir: Path, name: str, body: str = _STUB) -> None:
     path = bindir / name
-    path.write_text(_STUB, encoding="utf-8")
+    path.write_text(body, encoding="utf-8")
     path.chmod(path.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
 
 
@@ -43,13 +46,19 @@ def run_script(tmp_path: Path):
     bindir.mkdir()
     for tool in ("sudo", "apt-get", "add-apt-repository", "pip"):
         _make_stub(bindir, tool)
+    for tool, output in _ECHO_STUBS.items():
+        _make_stub(bindir, tool, f'#!/usr/bin/env bash\necho "{output}"\n')
 
     calls = tmp_path / "calls.log"
+    sources = tmp_path / "sources.list.d"
+    sources.mkdir()
     env = dict(os.environ)
     env["PATH"] = f"{bindir}{os.pathsep}{env['PATH']}"
     env["KICAD_BOT_CALLS"] = str(calls)
+    env["APT_SOURCES_DIR"] = str(sources)
 
     def _run(*args: str) -> list[str]:
+        env["FAKE_KICAD_VERSION"] = f"{args[0] if args else '9'}.0.8"
         proc = subprocess.run(
             ["bash", str(SCRIPT), *args],
             env=env,

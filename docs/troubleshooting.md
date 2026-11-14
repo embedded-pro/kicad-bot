@@ -13,6 +13,20 @@ that `kicad-cli` is on your PATH.
   `/Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli`.
 - Override the executable name/path with the `KICAD_CLI` environment variable.
 
+## Wrong KiCad version on Ubuntu 26.04 runners ("Failed to load schematic")
+
+`ubuntu-latest` is Ubuntu 26.04, which enables the **amd64v3** architecture
+variant: apt reads only the `binary-amd64v3` package indexes. The KiCad PPAs
+build KiCad for plain `amd64`, so apt used to skip the PPA's `kicad` and install
+Ubuntu's own, older one (KiCad 9.0.8), which cannot open KiCad 10 files.
+
+`scripts/install-kicad.sh` (used by the action) limits the PPA source to the
+machine's architecture (`Architectures: amd64` in its `.sources` file) and
+fails with `kicad-bot asked for KiCad N, but kicad-cli reports X` if the
+installed major still differs. To install KiCad yourself in another job, run
+the same script, or add the `Architectures:` line to the PPA's
+`/etc/apt/sources.list.d/*.sources` file before `apt-get update`.
+
 ## "did not produce an ERC/DRC report"
 
 `kicad-cli` ran but wrote no JSON. Usual causes:
