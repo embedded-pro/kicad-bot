@@ -122,15 +122,12 @@ runs:
       run: pip install "${{ github.action_path }}"
 
     # kicad-cli (always needed for verify; cheap relative to the full stack).
+    # The script also fixes the PPA on Ubuntu 26.04 (amd64v3) runners and fails
+    # unless the installed KiCad is the requested major version.
     - name: Install kicad-cli
       if: ${{ inputs.run-verify == 'true' || inputs.quickstart == 'true' }}
       shell: bash
-      run: |
-        set -euo pipefail
-        sudo add-apt-repository --yes "ppa:kicad/kicad-${{ inputs.kicad-version }}.0-releases"
-        sudo apt-get update
-        sudo apt-get install --yes --no-install-recommends kicad-cli || sudo apt-get install --yes --no-install-recommends kicad
-        kicad-cli version
+      run: bash "${{ github.action_path }}/scripts/install-kicad.sh" "${{ inputs.kicad-version }}"
 
     # The KiBot stack (BOM/diff/fab) needs the full KiCad + a headless display.
     # The install is delegated to a script so it can be tested in isolation; it

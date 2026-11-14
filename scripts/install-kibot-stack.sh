@@ -23,10 +23,8 @@ kicad_version="${1:-9}"
 
 # System packages: KiCad itself, a headless X server for the GUI-bound tools,
 # and the GTK runtime libraries the prebuilt wxPython wheel links against at
-# import time.
-sudo add-apt-repository --yes "ppa:kicad/kicad-${kicad_version}.0-releases"
-sudo apt-get update
-sudo apt-get install --yes \
+# import time. install-kicad.sh adds the PPA and checks the KiCad version.
+bash "$(dirname "${BASH_SOURCE[0]}")/install-kicad.sh" "${kicad_version}" \
   kicad \
   xvfb \
   libgtk-3-0 \
